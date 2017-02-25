@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import base64
 import cv2
+import numpy as np
 
 from image_match import image_match
 
@@ -21,12 +22,16 @@ def image_match_api():
   m1 = request.args.get('m1')
   m2 = request.args.get('m2')
 
-  m1 = base64.b64encode(m1)
-  m2 = base64.b64encode(m2)
+  m1 = m1.replace(' ','+')
+  m1 = base64.decodestring(m1)
+  m2 = m2.replace(' ','+')
+  m2 = base64.decodestring(m2)
 
-  # m1 = cv2.imdecode(m1, cv2.IMREAD_GRAYSCALE)
-  # m2 = cv2.imdecode(m2, cv2.IMREAD_GRAYSCALE)
+  m1 = np.fromstring(m1, np.uint8)
+  m1 = cv2.imdecode(m1, cv2.IMREAD_GRAYSCALE)
+  m2 = np.fromstring(m2, np.uint8)
+  m2 = cv2.imdecode(m2, cv2.IMREAD_GRAYSCALE)
 
-  # [result, score, score_type] = image_match(m1, m2)
-  # return jsonify({'result': result, 'score':score, 'score_type':score_type})
-  return jsonify({'m1base64': m1, 'm2base64':m2})
+  [result, score, score_type] = image_match(m1, m2)
+  return jsonify({'result': result, 'score':score, 'score_type':score_type})
+  # return jsonify({'m1base64': m1})

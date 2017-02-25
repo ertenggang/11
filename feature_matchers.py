@@ -1,14 +1,14 @@
 import cv2
+import numpy as np
 
 class local_features_matcher():
   def __init__(self, match_method='RANSAC'):
     self.flag = 'distance'
     self.match_method = getattr(cv2, match_method)
-    self.rej_threshold = 10
+    self.rej_threshold = 1
     self.max_iter= 1000
     self.confidence = 0.99
-    self.info = 'transform_match'
-    self.cache_root = os.path.join(self.cache_root, self.info, 'cache', self.data_name)
+
 
   def match(self, qfea, gfea):
     bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
@@ -23,7 +23,7 @@ class local_features_matcher():
     srcpoints = np.array(srcpoints)
     dstpoints = np.array(dstpoints)
 
-    transform = cv2.findHomography(srcpoints, dstpoints, self.match_method, self.rej_threshold, None, self.max_iter, self.confidence)[0]
+    transform = cv2.findHomography(srcpoints, dstpoints, self.match_method, self.rej_threshold)[0]
     if transform is None:
       return float("inf")
     else:
