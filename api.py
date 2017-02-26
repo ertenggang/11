@@ -30,6 +30,7 @@ def image_match_api():
   except:
     return jsonify({'error': 500001, 'info':'invalid base64 code!'})
 
+
   m1 = np.fromstring(m1, np.uint8)
   m1 = cv2.imdecode(m1, cv2.IMREAD_GRAYSCALE)
   m2 = np.fromstring(m2, np.uint8)
