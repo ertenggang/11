@@ -22,10 +22,13 @@ def image_match_api():
   m1 = request.args.get('m1')
   m2 = request.args.get('m2')
 
-  m1 = m1.replace(' ','+')
-  m1 = base64.decodestring(m1)
-  m2 = m2.replace(' ','+')
-  m2 = base64.decodestring(m2)
+  try:
+    m1 = m1.replace(' ','+')
+    m1 = base64.decodestring(m1)
+    m2 = m2.replace(' ','+')
+    m2 = base64.decodestring(m2)
+  except:
+    return jsonify({'error': 500001, 'info':'invalid base64 code!'})
 
   m1 = np.fromstring(m1, np.uint8)
   m1 = cv2.imdecode(m1, cv2.IMREAD_GRAYSCALE)
