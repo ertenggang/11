@@ -5,7 +5,7 @@ class local_features_matcher():
   def __init__(self, match_method='RANSAC'):
     self.flag = 'distance'
     self.match_method = getattr(cv2, match_method)
-    self.rej_threshold = 1
+    self.rej_threshold = 5
     self.max_iter= 1000
     self.confidence = 0.99
 
@@ -23,7 +23,7 @@ class local_features_matcher():
     srcpoints = np.array(srcpoints)
     dstpoints = np.array(dstpoints)
 
-    transform = cv2.findHomography(srcpoints, dstpoints, self.match_method, self.rej_threshold)[0]
+    transform = cv2.findHomography(srcpoints, dstpoints, self.match_method, self.rej_threshold, maxIters=self.max_iter, confidence=self.confidence)[0]
     if transform is None:
       return float("inf")
     else:
@@ -36,7 +36,7 @@ class local_features_matcher():
       c = np.dot(transform, ori_points)
       c = c.T[:,:-1]
       diff = c-dstpoints
-      error = np.mean(np.sqrt(np.sum(diff*diff,1)))
+      error = np.mean(np.sqrt(np.sum(diff*diff,1)))/sum(gfea['size'])
       return error
 
 
