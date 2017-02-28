@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import base64
+import urllib2
 import cv2
 import numpy as np
 
@@ -7,35 +7,45 @@ from image_match import image_match
 
 app = Flask(__name__)
 
-@app.route('/', methods = ['GET', 'POST'])
-def hello_world():
-  if request.method == 'POST':
-    f = request.files['file']
-    f.save('./test.jpg')
-    return 'upload completed'
-  else:
-    return 'hello world'
+# @app.route('/', methods = ['GET', 'POST'])
+# def hello_world():
+#   if request.method == 'POST':
+#     f = request.files['file']
+#     f.save('./test.jpg')
+#     return 'upload completed'
+#   else:
+#     return 'hello world'
 
+def get_image(murl):
+  req = urllib2.Request(murl)
+  req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36')
+  resp = urllib2.urlopen(req)
+  m = resp.read()
+  m = np.fromstring(m, np.uint8)
+  m = cv2.imdecode(m, cv2.IMREAD_GRAYSCALE)
+  return m
 
 @app.route('/image_match_api/', methods=['POST','GET'])
 def image_match_api():
-  m1 = request.args.get('m1')
-  m2 = request.args.get('m2')
+  m1_url = request.args.get('m1')
+  m2_url = request.args.get('m2')
 
-  try:
-    m1 = m1.replace(' ','+')
-    m1 = base64.decodestring(m1)
-    m2 = m2.replace(' ','+')
-    m2 = base64.decodestring(m2)
-  except:
-    return jsonify({'error': 500001, 'info':'invalid base64 code!'})
+  m1 = get_image(m1_url)
+  m2 = get_image(m2_url)
 
-
-  m1 = np.fromstring(m1, np.uint8)
-  m1 = cv2.imdecode(m1, cv2.IMREAD_GRAYSCALE)
-  m2 = np.fromstring(m2, np.uint8)
-  m2 = cv2.imdecode(m2, cv2.IMREAD_GRAYSCALE)
+  if m1 is None or m2 is None:
+    check_params = {}
+    if m1 is None:
+      check_params['m1'] = m1_url
+    if m2 is None:
+      check_params['m2'] = m2_url
+    return jsonify({'error': 'Fail to fetch images.', 'error_info':{'suggest':'The url of image is invaluable or the format of image is not supported.', 'check_params':check_params}, 'error_code':2101})
 
   [result, score, score_type] = image_match(m1, m2)
   return jsonify({'result': result, 'score':score, 'score_type':score_type})
-  # return jsonify({'m1base64': m1})
+
+
+if __name__ == '__main__':
+  app.debug = True
+  app.run(host='0.0.0.0')
+
