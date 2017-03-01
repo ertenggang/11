@@ -58,26 +58,6 @@ def image_match_api():
     return jsonify({'error': 'Fail to fetch images.', 'error_info':error_info, 'error_code':2101})
 
 
-
-
-  m1_url = request.args.get('m1')
-  m2_url = request.args.get('m2')
-
-  (status1, m1) = get_image(m1_url)
-  (status2, m2) = get_image(m2_url)
-
-  if m1 is None or m2 is None:
-    check_params = {}
-    if m1 is None:
-      check_params['m1'] = m1_url
-    if m2 is None:
-      check_params['m2'] = m2_url
-    return jsonify({'error': 'Fail to fetch images.', 'error_info':{'suggest':'The url of image is invaluable or the format of image is not supported.', 'check_params':check_params}, 'error_code':2101})
-
-  [result, score, score_type] = image_match(m1, m2)
-  return jsonify({'result': result, 'score':score, 'score_type':score_type})
-
-
 if __name__ == '__main__':
   app.debug = True
   app.run(host='0.0.0.0')
