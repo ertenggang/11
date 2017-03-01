@@ -6,7 +6,7 @@ import feature_extractors
 import feature_matchers
 
 def image_match(m1, m2, threshold = 0.2):
-  extrator = feature_extractors.local_features('ORB')
+  extrator = feature_extractors.local_features('SIFT')
   matcher = feature_matchers.local_features_matcher('RANSAC')
 
   fea1 = extrator.feature_extract(m1)
@@ -25,7 +25,7 @@ def image_match(m1, m2, threshold = 0.2):
   else:
     result = 0
 
-  return (result, match_score, score_type)
+  return (result, match_score, score_type, threshold)
 
 if __name__ == '__main__':
   m1 = cv2.imread('images/cat11.jpg')
