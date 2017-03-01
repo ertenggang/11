@@ -52,10 +52,10 @@ def image_match_api():
       error_info.append({'url':url, 'error':'Unkown error.', 'info':''})
 
   if len(error_info) <= 0:
-    [result, score, score_type] = image_match(imgs[0], imgs[1])
-    return jsonify({'result': result, 'score':score, 'score_type':score_type})
+    [result, score, score_type, threshold] = image_match(imgs[0], imgs[1])
+    return jsonify({'ret_code':0, 'result': {'match': result, 'score':score, 'score_type':score_type, 'threshold': threshold}})
   else:
-    return jsonify({'error': 'Fail to fetch images.', 'error_info':error_info, 'error_code':2101})
+    return jsonify({'error': 'Fail to fetch images.', 'error_info':error_info, 'ret_code':2101})
 
 
 if __name__ == '__main__':
