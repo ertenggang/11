@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 import urllib2
 import cv2
-import numpy as np
 import base64
+import numpy as np
 
 from image_match import image_match
 
