@@ -42,7 +42,7 @@ def image_match_api():
   error_info = []
   imgs = [[]]*param_num
   for i in range(param_num):
-    url = request.args.get('m%d'%(i+1))
+    url = request.values.get('m%d'%(i+1))
     (status, imgs[i]) = get_image(url)
     if status == GET_IMAGE_STATUS.EXCEPTION:
       error_info.append({'url':url, 'error': 'Exception raised during opening url.', 'info':'Invalid URL'})
