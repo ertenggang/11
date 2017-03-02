@@ -1,11 +1,11 @@
 import cv2
 
 class local_features():
-  def __init__(self, feature_type='ORB'):
+  def __init__(self, feature_type='SIFT'):
     self.feature_type = feature_type
     self.max_edge = 500
-    # self.extractor = getattr(cv2.xfeatures2d, self.feature_type+'_create')()
-    self.extractor = getattr(cv2, self.feature_type+'_create')()
+    self.extractor = getattr(cv2.xfeatures2d, self.feature_type+'_create')()
+    # self.extractor = getattr(cv2, self.feature_type+'_create')()
 
   def feature_extract(self, im):
     height, width = im.shape[:2]

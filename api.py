@@ -40,8 +40,8 @@ def image_match_api():
     return jsonify({'ret_code':2101, 'error':'Invalid data.', 'detail':info})
 
 
-  [match, score, score_type] = image_match(imgs[0], imgs[1])
-  return jsonify({'ret_code':0, 'result':{'match':match, 'score':score, 'score_type':score_type}})
+  [match, score, score_type, threshold] = image_match(imgs[0], imgs[1])
+  return jsonify({'ret_code':0, 'result':{'match':match, 'score':score, 'score_type':score_type, 'threshold':threshold}})
 
   
 
