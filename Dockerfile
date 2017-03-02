@@ -4,9 +4,10 @@ MAINTAINER qianyelin "422036876@qq.com"
 
 RUN mkdir /flask_app
 WORKDIR /flask_app
-RUN curl https://bootstrap.pypa.io/get-pip.py > get-pip.py && python get-pip.py && rm get-pip.py
-RUN pip install flask
 RUN git clone https://github.com/ertenggang/11.git .
+RUN python get-pip.py && rm get-pip.py
+RUN pip install flask
+
 
 CMD python api.py
 
