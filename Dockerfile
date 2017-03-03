@@ -1,4 +1,4 @@
-FROM docker pull registry-internal.cn-qingdao.aliyuncs.com/zhuangwj/image-env
+FROM registry-internal.cn-qingdao.aliyuncs.com/zhuangwj/image-env
 
 MAINTAINER qianyelin "422036876@qq.com"
 
