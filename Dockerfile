@@ -1,4 +1,4 @@
-FROM registry-internal.cn-qingdao.aliyuncs.com/zhuangwj/image-env
+FROM registry.cn-qingdao.aliyuncs.com/zhuangwj/image-env
 
 MAINTAINER qianyelin "422036876@qq.com"
 
