@@ -11,12 +11,26 @@ class local_features_matcher():
 
 
   def match(self, qfea, gfea):
-    bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
-    matches = bf.match(qfea['dep'], gfea['dep'])
+    # bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
+    bf = cv2.BFMatcher()
+    matches = bf.knnMatch(qfea['dep'], gfea['dep'], k=2)
+
+    # FLANN_INDEX_KDTREE = 0
+    # index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees = 5)
+    # search_params = dict(checks=50)
+
+    # flann = cv2.FlannBasedMatcher(index_params, search_params)
+
+    # matches = flann.knnMatch(qfea['dep'], gfea['dep'], k=2)
+
+    good_matches = []
+    for m, n in matches:
+      if m.distance < 0.75*n.distance:
+        good_matches.append(m)
 
     srcpoints = []
     dstpoints = []
-    for m in matches:
+    for m in good_matches:
       srcpoints.append(qfea['kp'][m.queryIdx])
       dstpoints.append(gfea['kp'][m.trainIdx])
 

@@ -8,6 +8,5 @@ RUN git clone https://github.com/ertenggang/11.git .
 
 CMD python api.py
 
-EXPOSE 5000
 
 

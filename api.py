@@ -22,7 +22,7 @@ def image_match_api():
   
   for i in range(param_num):
     param_name = 'm%s'%(i+1)
-    imgs[i] = request.values.get(param_name)
+    imgs[i] = request.values.get(param_name) 
     try:
       imgs[i] = imgs[i].replace(' ', '+')
       imgs[i] = base64.decodestring(imgs[i])
@@ -47,6 +47,6 @@ def image_match_api():
 
 
 if __name__ == '__main__':
-  app.debug = True
+  app.debug = False
   app.run(host='0.0.0.0')
 
