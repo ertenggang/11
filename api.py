@@ -32,24 +32,17 @@ def image_match_api(level):
 
   if len(info) > 0:
     return jsonify({'ret_code':2101, 'error':'Invalid data.', 'detail':info})
-  
-  
 
   if level == 'match':
-    for i in range(param_num):
-      imgs[i] = np.fromstring(imgs[i], np.uint8)
-      imgs[i] = cv2.imdecode(imgs[i], cv2.IMREAD_GRAYSCALE)
-      if imgs[i] is None:
-        info[param_name] = 'Invalid image data!'
-    if len(info) > 0:
-      return jsonify({'ret_code':2101, 'error':'Invalid data.', 'detail':info})
-    [match, score, score_type, threshold] = image_match(imgs[0], imgs[1])
+    [match, score, score_type, threshold, info] = image_match(imgs[0], imgs[1])
   elif level == 'duplication':
     print type(imgs[0])
-    [match, score, score_type, threshold] = image_duplication(imgs[0], imgs[1])
+    [match, score, score_type, threshold, info] = image_duplication(imgs[0], imgs[1])
   else:
     pass
-
+  
+  if len(info) > 0:
+    return jsonify({'ret_code':2101, 'error':'Invalid data.', 'detail':info})
   return jsonify({'ret_code':0, 'result':{'match':match, 'score':score, 'score_type':score_type, 'threshold':threshold}})
 
 

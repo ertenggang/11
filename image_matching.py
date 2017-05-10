@@ -7,42 +7,73 @@ import feature_matchers
 
 from image_match.goldberg import ImageSignature
 
+def img_decode_cv(img):
+  img = np.fromstring(img, np.uint8)
+  img = cv2.imdecode(img, cv2.IMREAD_GRAYSCALE)
+  return img
+
 def image_match(m1, m2, threshold = 0.2):
-  extrator = feature_extractors.local_features('SIFT')
-  matcher = feature_matchers.local_features_matcher('RANSAC')
+  result = 0
+  match_score = 0
+  score_type = ''
+  info = {}
 
-  fea1 = extrator.feature_extract(m1)
-  fea2 = extrator.feature_extract(m2)
+  m1 = img_decode_cv(m1)
+  if m1 is None:
+    info['m1'] = 'Invalid image data!'
+  m2 = img_decode_cv(m2)
+  if m2 is None:
+    info['m2'] = 'Invalid image data!' 
 
-  match_score = matcher.match(fea1, fea2)
-  score_type = matcher.flag
+  if len(info) == 0:
+    extrator = feature_extractors.local_features('SIFT')
+    matcher = feature_matchers.local_features_matcher('RANSAC')
 
-  if score_type == 'distance':
-    result = match_score < threshold
-  else:
-    result = match_score > threshold
+    fea1 = extrator.feature_extract(m1)
+    fea2 = extrator.feature_extract(m2)
 
-  if result:
-    result = 1
-  else:
-    result = 0
+    match_score = matcher.match(fea1, fea2)
+    score_type = matcher.flag
 
-  return (result, match_score, score_type, threshold)
+    if score_type == 'distance':
+      result = match_score < threshold
+    else:
+      result = match_score > threshold
+
+    if result:
+      result = 1
+    else:
+      result = 0
+
+  return (result, match_score, score_type, threshold, info)
 
 def image_duplication(m1, m2, threshold = 0.4):
+  result = 0
+  match_score = 0
+  score_type = ''
+  info = {}
+
   gis = ImageSignature()
-  a = gis.generate_signature(m1, True)
-  b = gis.generate_signature(m2, True)
-  match_score = gis.normalized_distance(a, b)
-  score_type = 'distance'
-  result = match_score < threshold
+  try:
+    a = gis.generate_signature(m1, True)
+  except:
+    info['m1'] = 'Invalid image data!'
+  try:
+    b = gis.generate_signature(m2, True)
+  except:
+    info['m2'] = 'Invalid image data!'
 
-  if result:
-    result = 1
-  else:
-    result = 0
+  if len(info) == 0:
+    match_score = gis.normalized_distance(a, b)
+    score_type = 'distance'
+    result = match_score < threshold
 
-  return (result, match_score, score_type, threshold)
+    if result:
+      result = 1
+    else:
+      result = 0
+
+  return (result, match_score, score_type, threshold, info)
 
 
 if __name__ == '__main__':
