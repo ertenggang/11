@@ -4,7 +4,8 @@ import base64
 import numpy as np
 import cv2
 
-from image_match import image_match
+from image_matching import image_match
+from image_matching import image_duplication
 
 app = Flask(__name__)
 
@@ -14,8 +15,8 @@ def hello_world():
     return 'hello world'
 
 
-@app.route('/image_match_api/', methods=['POST','GET'])
-def image_match_api():
+@app.route('/image_match_api/<level>', methods=['POST','GET'])
+def image_match_api(level):
   param_num = 2
   imgs = [[]]*param_num
   info = {}
@@ -32,21 +33,28 @@ def image_match_api():
   if len(info) > 0:
     return jsonify({'ret_code':2101, 'error':'Invalid data.', 'detail':info})
   
-  for i in range(param_num):
-    imgs[i] = np.fromstring(imgs[i], np.uint8)
-    imgs[i] = cv2.imdecode(imgs[i], cv2.IMREAD_GRAYSCALE)
-    if imgs[i] is None:
-      info[param_name] = 'Invalid image data!'
-  if len(info) > 0:
-    return jsonify({'ret_code':2101, 'error':'Invalid data.', 'detail':info})
+  
 
+  if level == 'match':
+    for i in range(param_num):
+      imgs[i] = np.fromstring(imgs[i], np.uint8)
+      imgs[i] = cv2.imdecode(imgs[i], cv2.IMREAD_GRAYSCALE)
+      if imgs[i] is None:
+        info[param_name] = 'Invalid image data!'
+    if len(info) > 0:
+      return jsonify({'ret_code':2101, 'error':'Invalid data.', 'detail':info})
+    [match, score, score_type, threshold] = image_match(imgs[0], imgs[1])
+  elif level == 'duplication':
+    print type(imgs[0])
+    [match, score, score_type, threshold] = image_duplication(imgs[0], imgs[1])
+  else:
+    pass
 
-  [match, score, score_type, threshold] = image_match(imgs[0], imgs[1])
   return jsonify({'ret_code':0, 'result':{'match':match, 'score':score, 'score_type':score_type, 'threshold':threshold}})
 
 
 
 if __name__ == '__main__':
-  app.debug = False
+  app.debug = True
   app.run(host='0.0.0.0')
 
