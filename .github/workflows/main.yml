@@ -1,0 +1,43 @@
+# 工作流的名称，会显示在Actions页面
+name: CI Pipeline
+
+# 定义触发事件：当代码推送到main分支，或有人创建PR到main分支时触发
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# 权限设置，通常需要读写权限来拉取代码和上传制品
+permissions:
+  contents: read
+  packages: write
+
+# 一个工作流可以包含多个作业，这里我们定义一个名为“test”的作业
+jobs:
+  test:
+    # 作业运行的环境：最新版Ubuntu
+    runs-on: ubuntu-latest
+    
+    # 步骤序列
+    steps:
+      # 步骤1：检出代码（必须的第一步，使用官方action）
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 步骤2：设置Python环境
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'  # 指定Python版本
+
+      # 步骤3：安装依赖（示例，假设你有requirements.txt）
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      # 步骤4：运行单元测试
+      - name: Run tests
+        run: |
+          python -m pytest tests/ -v  # 假设你的测试文件在tests目录
